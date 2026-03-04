@@ -9,15 +9,13 @@
 #include <zmk/event_manager.h>
 #include <zmk/events/position_state_changed.h>
 
-LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
+LOG_MODULE_REGISTER(splitsense_matrix, LOG_LEVEL_DBG);
 
-#define SPLITSENSE_SERVICE_UUID                                                \
-  BT_UUID_DECLARE_128(                                                         \
-      BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef0))
+static struct bt_uuid_128 splitsense_svc_uuid = BT_UUID_INIT_128(
+    BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef0));
 
-#define SPLITSENSE_MATRIX_CHAR_UUID                                            \
-  BT_UUID_DECLARE_128(                                                         \
-      BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef1))
+static struct bt_uuid_128 splitsense_char_uuid = BT_UUID_INIT_128(
+    BT_UUID_128_ENCODE(0x12345678, 0x1234, 0x5678, 0x1234, 0x56789abcdef1));
 
 // 2 bytes:
 // [0] is_pressed (1 or 0)
@@ -32,8 +30,8 @@ static void splitsense_matrix_ccc_cfg_changed(const struct bt_gatt_attr *attr,
 }
 
 BT_GATT_SERVICE_DEFINE(
-    splitsense_matrix_svc, BT_GATT_PRIMARY_SERVICE(SPLITSENSE_SERVICE_UUID),
-    BT_GATT_CHARACTERISTIC(SPLITSENSE_MATRIX_CHAR_UUID, BT_GATT_CHRC_NOTIFY,
+    splitsense_matrix_svc, BT_GATT_PRIMARY_SERVICE(&splitsense_svc_uuid.uuid),
+    BT_GATT_CHARACTERISTIC(&splitsense_char_uuid.uuid, BT_GATT_CHRC_NOTIFY,
                            BT_GATT_PERM_NONE, NULL, NULL, NULL),
     BT_GATT_CCC(splitsense_matrix_ccc_cfg_changed,
                 BT_GATT_PERM_READ | BT_GATT_PERM_WRITE));
@@ -52,8 +50,8 @@ static int splitsense_matrix_event_listener(const zmk_event_t *eh) {
 
   LOG_DBG("SplitSense Matrix: position %d, state %d", ev->position, ev->state);
 
-  // Notify connected client
-  int err = bt_gatt_notify(NULL, &splitsense_matrix_svc.attrs[1],
+  // Notify connected client. The value attribute is always index 2
+  int err = bt_gatt_notify(NULL, &splitsense_matrix_svc.attrs[2],
                            matrix_payload, sizeof(matrix_payload));
   if (err && err != -ENOTCONN) {
     LOG_WRN("SplitSense Matrix notify failed (err %d)", err);
