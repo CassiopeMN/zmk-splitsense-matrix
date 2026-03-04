@@ -1,0 +1,6 @@
+config SPLITSENSE_MATRIX
+    bool "Enable SplitSense raw matrix event BLE streaming"
+    default n
+    help
+      Exposes a custom BLE GATT service that notifies connected devices
+      every time a logical key position changes state (pressed/released).

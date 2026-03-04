@@ -1,0 +1,5 @@
+zephyr:
+  module:
+    name: splitsense_matrix
+    settings:
+      kconfig: Kconfig
