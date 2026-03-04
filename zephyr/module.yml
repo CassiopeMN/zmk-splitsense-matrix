@@ -1,3 +1,4 @@
-build:
-  cmake: .
-  kconfig: Kconfig
+zephyr:
+  build:
+    cmake: .
+    kconfig: Kconfig
