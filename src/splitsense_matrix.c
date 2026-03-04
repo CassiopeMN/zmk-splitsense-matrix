@@ -3,6 +3,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include <stdbool.h>
+#include <stdint.h>
 
 #include <zmk/event_manager.h>
 #include <zmk/events/position_state_changed.h>
@@ -34,7 +36,7 @@ BT_GATT_SERVICE_DEFINE(
     BT_GATT_CHARACTERISTIC(SPLITSENSE_MATRIX_CHAR_UUID, BT_GATT_CHRC_NOTIFY,
                            BT_GATT_PERM_NONE, NULL, NULL, NULL),
     BT_GATT_CCC(splitsense_matrix_ccc_cfg_changed,
-                BT_GATT_PERM_READ | BT_GATT_PERM_WRITE), );
+                BT_GATT_PERM_READ | BT_GATT_PERM_WRITE));
 
 // Event listener for matrix positions
 static int splitsense_matrix_event_listener(const zmk_event_t *eh) {
