@@ -1,4 +1,4 @@
-zephyr:
-  build:
-    cmake: .
-    kconfig: Kconfig
+name: zmk-splitsense-matrix
+build:
+  cmake: .
+  kconfig: Kconfig
